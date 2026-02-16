@@ -5,7 +5,7 @@ import random
 import time
 app = Ursina()
 camera.orthographic = True
-camera.fov = 100
+camera.fov = 30
 lives = 3
 
    
@@ -23,19 +23,24 @@ duplicate(bg, x = 50, z = 5 , y = -10)
 
 ground = Entity(model='quad', y = -7 , scale_x = 15, collider = 'box' , color = color.rgba(0.89, 0.52, 0.5, 1), x = -8 )
 
-platform1 = Entity(model='quad', y = -4 , scale_x = 3, collider = 'box' , color = color.rgba(0.89, 0.52, 0.5, 1), x = 3 )
-platform2 = Entity(model='quad', y = 0 , scale_x = 3, collider = 'box' , color = color.rgba(0.89, 0.52, 0.5, 1), x = 4 )
-platform3 = Entity(model='quad', y = 3 , scale_x = 3, collider = 'box' , color = color.rgba(0.89, 0.52, 0.5, 1), x = -2 )
-duplicate(platform1, random.randint(10,20), x = random.randint(10,20) , y = random.randint(-10,10))
-duplicate(platform1, random.randint(10,20), x = random.randint(10,20) , y = random.randint(-10,10))
-duplicate(platform1, random.randint(10,20), x = random.randint(10,20) , y = random.randint(-10,10))
-duplicate(platform1, random.randint(10,20), x = random.randint(20,30) , y = random.randint(-10,10))
-duplicate(platform1, random.randint(10,20), x = random.randint(20,30) , y = random.randint(-10,10))
-duplicate(platform1, random.randint(10,20), x = random.randint(20,30) , y = random.randint(-10,10))
-duplicate(platform1, random.randint(10,20), x = random.randint(30,40) , y = random.randint(10,10))
-duplicate(platform1, random.randint(10,20), x = random.randint(30,40) , y = random.randint(-10,10))
-duplicate(platform1, random.randint(10,20), x = random.randint(30,40) , y = random.randint(-10,10))
-duplicate(platform1, random.randint(10,20), x = random.randint(50,60) , y = random.randint(-10,10))
+platform1 = Entity(model='quad', scale=(1,0.5), collider='box', color=color.rgba(0.89, 0.52, 0.5, 1))
+def platform_generator():
+    p1 = duplicate(platform1, random.randint(10,20), x = random.randint(5,10) , y = random.randint(-10,10))
+    p1.animate_x(p1.x + 8, duration=2, curve=curve.in_out_quad, loop=True)
+    p2 = duplicate(platform1, random.randint(10,20), x = random.randint(10,20) , y = random.randint(-10,10))
+    p3 = duplicate(platform1, random.randint(10,20), x = random.randint(15,20) , y = random.randint(-10,10))
+    p3.animate_x(p1.x + 8, duration=2, curve=curve.in_out_quad, loop=True)
+    p4 = duplicate(platform1, random.randint(10,20), x = random.randint(25,30) , y = random.randint(-10,10))
+    p4.animate_x(p1.x + 8, duration=2, curve=curve.in_out_quad, loop=True)
+    p5 =duplicate(platform1, random.randint(10,20), x = random.randint(35,40) , y = random.randint(-10,10))
+    p6 = duplicate(platform1, random.randint(10,20), x = random.randint(45,50) , y = random.randint(-10,10))
+    p7 = duplicate(platform1, random.randint(10,20), x = random.randint(30,40) , y = random.randint(10,10))
+    p8 = duplicate(platform1, random.randint(10,20), x = random.randint(30,40) , y = random.randint(-10,10))
+    p9 =duplicate(platform1, random.randint(10,20), x = random.randint(30,40) , y = random.randint(-10,10))
+    p12 = duplicate(platform1, random.randint(10,20), x = random.randint(50,60) , y = random.randint(-10,10))
+
+platform_generator()
+
 
 
 
@@ -47,8 +52,7 @@ player.x = -7
 camera.add_script(SmoothFollow(target= player, offset=[0,3,-30], speed=3))
 
 def update():
-    platform1.animate('x', platform1.x + 5, duration=2, curve=curve.in_out_quad)
-
+    
     global lives
  
     if player.y < -10:
