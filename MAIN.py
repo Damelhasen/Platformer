@@ -5,8 +5,10 @@ import random
 import time
 app = Ursina()
 camera.orthographic = True
+
+
 camera.fov = 30
-lives = 5
+lives = 100
 
 def platform_generator():
 
@@ -16,10 +18,14 @@ def platform_generator():
     p3 = duplicate(platform1, random.randint(10,20), x = random.randint(12,16) , y = random.randint(-10,10))
     p3.animate_x(p1.x + 8, duration=2, curve=curve.in_out_quad, loop=True)
     p4 = duplicate(platform1, random.randint(10,20), x = random.randint(16,20) , y = random.randint(-10,10))
+    p4.animate_x(p1.x + 8, duration=2, curve=curve.in_out_quad, loop=True)
+
     p5 =duplicate(platform1, random.randint(10,20), x = random.randint(20,24) , y = random.randint(-10,10))
     p6 = duplicate(platform1, random.randint(10,20), x = random.randint(28,32) , y = random.randint(-10,10))
     p7 = duplicate(platform1, random.randint(10,20), x = random.randint(36,40) , y = random.randint(10,10))
     p8 = duplicate(platform1, random.randint(10,20), x = random.randint(44,48) , y = random.randint(-10,10))
+    p8.animate_x(p1.x + 8, duration=2, curve=curve.in_out_quad, loop=True)
+
     p9 =duplicate(platform1, random.randint(10,20), x = random.randint(52,56) , y = random.randint(-10,10))
     p12 = duplicate(platform1, random.randint(10,20), x = random.randint(60,64) , y = random.randint(-10,10))
 def contact(obj1 :str , obj2:str):
@@ -37,6 +43,9 @@ input_handler.bind('up arrow', 'space')
 input_handler.bind('gamepad dpad right', 'd')
 input_handler.bind('gamepad dpad left', 'a')
 input_handler.bind('gamepad a', 'space')
+input_handler.bind('gamepad left stick right', 'd')
+input_handler.bind('gamepad left stick left', 'a')
+
 
 ###################################Map Loading########################################################################################################################
 bg = Entity(model='quad',  scale=(16**2,16**2), color = color.rgba(0.9,0.7,0.04,1) , z=5)
@@ -61,7 +70,7 @@ camera.add_script(SmoothFollow(target= player, offset=[0,3,-30], speed= 4))
 def update():
     
     global lives
- 
+    
     if player.y < -10:
         lives -= 1
         player.y = -3
@@ -73,7 +82,10 @@ def update():
     if contact(player,powerup) == True :
         print("HIT")
         powerup.y = -1000
-        player.jump_height = 20
+        player.jump_height = 15
     
+    
+    
+   
 app.run()
 
