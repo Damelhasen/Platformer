@@ -1,5 +1,17 @@
 Simple platformer game using the Ursina library
 
+
+
+To install :
+```bash
+pip install ursina-platformer
+ursina-platformer
+```
+if running into issues try manualy installing panda3d and then running the game 
+```bash
+pip install panda3d
+pip install ursina-platformer
+```
 AI used for repeated autofill
 
 DS4 WIndows supported
