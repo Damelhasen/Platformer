@@ -3,6 +3,13 @@ from ursina.prefabs.platformer_controller_2d import PlatformerController2d
 import random
 import math
 import time
+import sys
+import os
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 app = Ursina()
 camera.orthographic = True
@@ -13,7 +20,6 @@ oscillating_platforms = []  # (entity, start_x, start_y, x_dist, y_dist, x_speed
 
 def platform_generator():
     positions = [
-        # (x, y, x_moves, y_moves)
         (random.randint(4,8),   random.randint(-4,4), True,  False),
         (random.randint(8,12),  random.randint(-4,4), False, False),
         (random.randint(12,16), random.randint(-4,4), True,  True),
@@ -69,14 +75,14 @@ powerup = Entity(
     color=color.rgba(0.04, 0.7, 0.9, 1),
     collider=None,
     x=-2, y=2,
-    texture="assets/fruit.png"
+    texture=resource_path("assets/fruit.png")
 )
 
 # Player
 player = PlatformerController2d(
     y=-3, scale=(2, 2, 0),
     color=color.white,
-    texture="assets/sprite.png",
+    texture=resource_path("assets/sprite.png"),
     jump_height=10
 )
 player.x = -7
@@ -98,7 +104,6 @@ def update():
         game_over("Game Over!")
 
     if contact(player, powerup):
-        print("HIT")
         powerup.y = -1000
         player.jump_height = 15
 
