@@ -1,8 +1,7 @@
 from ursina import *
 from ursina.prefabs.platformer_controller_2d import PlatformerController2d
+from platform_motion import advance_bouncing_axis
 import random
-import math
-import time
 import sys
 import os
 
@@ -16,7 +15,7 @@ camera.orthographic = True
 camera.fov = 30
 lives = 100
 
-oscillating_platforms = []  # (entity, start_x, start_y, x_dist, y_dist, x_speed, y_speed)
+moving_platforms = []
 
 def platform_generator():
     positions = [
@@ -35,9 +34,15 @@ def platform_generator():
         p = duplicate(platform1, x=px, y=py)
         x_dist = 4 if x_moves else 0
         y_dist = 2 if y_moves else 0
-        x_speed = random.uniform(0.8, 1.5)
-        y_speed = random.uniform(0.8, 1.5)
-        oscillating_platforms.append((p, px, py, x_dist, y_dist, x_speed, y_speed))
+        moving_platforms.append({
+            "entity": p,
+            "min_x": px - x_dist,
+            "max_x": px + x_dist,
+            "min_y": py - y_dist,
+            "max_y": py + y_dist,
+            "velocity_x": random.uniform(1.5, 3.0) if x_moves else 0,
+            "velocity_y": random.uniform(1.5, 3.0) if y_moves else 0,
+        })
 
 def contact(obj1, obj2, x_thresh=1, y_thresh=1):
     return abs(obj1.x - obj2.x) < x_thresh and abs(obj1.y - obj2.y) < y_thresh
@@ -91,9 +96,22 @@ camera.add_script(SmoothFollow(target=player, offset=[0, 3, -30], speed=4))
 def update():
     global lives
 
-    for p, start_x, start_y, x_dist, y_dist, x_speed, y_speed in oscillating_platforms:
-        p.x = start_x + math.sin(time.time() * x_speed) * x_dist
-        p.y = start_y + math.sin(time.time() * y_speed) * y_dist
+    for platform in moving_platforms:
+        p = platform["entity"]
+        p.x, platform["velocity_x"] = advance_bouncing_axis(
+            p.x,
+            platform["velocity_x"],
+            platform["min_x"],
+            platform["max_x"],
+            time.dt,
+        )
+        p.y, platform["velocity_y"] = advance_bouncing_axis(
+            p.y,
+            platform["velocity_y"],
+            platform["min_y"],
+            platform["max_y"],
+            time.dt,
+        )
 
     if player.y < -10:
         lives -= 1
